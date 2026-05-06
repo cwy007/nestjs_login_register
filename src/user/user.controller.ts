@@ -15,7 +15,12 @@ export class UserController {
   @Post('login')
   async login(@Body() loginDto: LoginDto, @Res({ passthrough: true }) res: Response) {
     const user = await this.userService.login(loginDto);
-    const token = this.jwtService.sign({ username: user.username, sub: user.id });
+    const token = await this.jwtService.signAsync({
+      user: {
+        id: user.id,
+        username: user.username,
+      }
+    });
     res.setHeader('Authorization', `Bearer ${token}`);
     return '登录成功';
   }
