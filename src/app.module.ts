@@ -4,26 +4,33 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { authPlugins } from 'mysql2';
 import { UserModule } from './user/user.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [TypeOrmModule.forRoot({
-    type: 'mysql',
-    host: 'localhost',
-    port: 3306,
-    username: 'root',
-    password: 'Cwy17824',
-    database: 'login_test',
-    entities: [__dirname + '/**/*.entity{.ts,.js}'],
-    synchronize: true,
-    logging: true,
-    poolSize: 10,
-    connectorPackage: 'mysql2',
-    extra: {
-      authPlugins: {
-        sha256_password: authPlugins.sha256_password,
+  imports: [
+    JwtModule.register({
+      global: true,
+      secret: 'cwy007',
+      signOptions: { expiresIn: '7d' },
+    }),
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: 'localhost',
+      port: 3306,
+      username: 'root',
+      password: 'Cwy17824',
+      database: 'login_test',
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      synchronize: true,
+      logging: true,
+      poolSize: 10,
+      connectorPackage: 'mysql2',
+      extra: {
+        authPlugins: {
+          sha256_password: authPlugins.sha256_password,
+        },
       },
-    },
-  }), UserModule],
+    }), UserModule],
   controllers: [AppController],
   providers: [AppService],
 })
